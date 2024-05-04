@@ -1,0 +1,35 @@
+\section{Conclusion}
+
+\begin{frame}
+    \frametitle{Architecture Design}
+    \begin{itemize}
+        \item Divide-and-conquer design enables flexible cloud deployment.
+        \item Separation of transaction system from storage layer enhances flexibility and scalability.
+    \end{itemize}
+\end{frame}
+%------------------------------------------------
+\begin{frame}
+    \frametitle{Simulation Testing}
+    \begin{itemize}
+        \item Simulation testing accelerates bug detection and debugging.
+        \item Increased reliability through rigorous correctness testing.
+    \end{itemize}
+\end{frame}
+%------------------------------------------------
+\begin{frame}
+    \frametitle{Fast Recovery}
+    \begin{itemize}
+        \item Fast recovery simplifies software upgrades and configuration changes.
+        \item Significantly reduces downtime compared to traditional rolling upgrades.
+    \end{itemize}
+\end{frame}
+%------------------------------------------------
+\begin{frame}
+    \frametitle{5s MVCC Window}
+    \begin{itemize}
+        \item Choice of 5-second MVCC window limits transaction sizes (Storage server keeps recent transaction in memory).
+        \item Majority of OLTP use cases are accommodated within this window.
+        \item Exceeding the time limit often exposes inefficiencies in client applications.
+        \item Transactional tasks can be divided into smaller transactions to fit within the window.
+    \end{itemize}
+\end{frame}
