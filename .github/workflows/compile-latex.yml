@@ -32,5 +32,5 @@ jobs:
       - name: Carica PDF come artifact
         uses: actions/upload-artifact@v2
         with:
-          name: Creazione_PDF
+          name: PDF_output
           path: main.pdf
