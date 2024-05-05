@@ -2,19 +2,30 @@
 
 %------------------------------------------------
 \begin{frame}
-	\frametitle{Optimistic concurrency control}
+	\frametitle{Optimistic concurrency control P1}
  In a system with \textbf{optimistic concurrency control}, transactions operate under the optimistic assumption that conflicts are rare. 
 \vspace{0.5cm}
 
- Consequently, instead of applying locks or rigid coordination mechanisms to manage concurrency, transactions proceed independently, and conflict resolution is checked only at the end
+ OCC assumes that multiple transactions can frequently complete without interfering with each other.
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Optimistic concurrency control P2}
+While running, transactions use data resources without acquiring locks on those resources. Before committing, each transaction verifies that no other transaction has modified the data it has read. 
+\vspace{0.5cm}
+
+If the check reveals conflicting modifications, the committing transaction rolls back and can be restarted.
 \end{frame}
 
 %------------------------------------------------
 \begin{frame}
 	\frametitle{Multiversion Concurrency Control (MVCC)}
-  FoundationDB utilizes multiversion concurrency control as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time. \vspace{0.5cm}
+  FoundationDB utilizes multiversion concurrency control as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time (always a consistent view when reading).
+  \vspace{0.5cm}
   
-  Changes made by a transaction are not applied directly to existing data but are recorded as new versions. This allows multiple transactions to operate simultaneously without interfering with each other.
+  Changes made by a transaction are not applied directly to existing data.
+  Transaction can only be performed within the MVCC window (5 seconds).
 \end{frame}
 %------------------------------------------------
 
@@ -58,9 +69,10 @@ Coordinators form a Paxos group (consensus protocol) and elect the Cluster Contr
 \begin{frame}
     \frametitle{Control plane P2}
     
-
-\textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.\\
-\textbf{Ratekeeper} provides overload protection for the cluster.
+\begin{itemize}
+\item \textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.
+\item \textbf{Ratekeeper} provides overload protection for the cluster.
+\end{itemize}
 	
 \end{frame}
 
@@ -82,7 +94,9 @@ Coordinators form a Paxos group (consensus protocol) and elect the Cluster Contr
 \begin{frame}
 	\frametitle{Data plane: Transaction system (TS) P2}
 
-FoundationDB uses \textbf{multiversion concurrency control} to provide transactionally isolated reads without locking data or blocking writes.\\
+FoundationDB uses \textbf{multiversion concurrency control} to provide transactionally isolated reads without locking data or blocking writes.
+\vspace{0.5cm}
+
 \textbf{Optimistic concurrency control} ensures that deadlocks are impossible and that slow or failing clients cannot interfere with the operation of the database.
 	
 \end{frame}
@@ -105,19 +119,20 @@ FoundationDB uses \textbf{multiversion concurrency control} to provide transacti
 The Storage system consists of a number of \textbf{Storage Servers}, each
 storing a set of data shards (contiguous key ranges),
 and serving client reads. Storage Servers are the majority of processes in the system, and together they form a distributed B-tree.
+The vast majority of processes in a cluster are storage servers.
 	
 \end{frame}
 
 % %------------------------------------------------
 \begin{frame}
 	\frametitle{Scaling}
-Processes are assigned different roles, scaling is just adding processes for each role. \\
+Scaling is just adding processes for each role. \\
 
 \begin{itemize}
-    \item Clients read from sharded StorageServers, so reads scale
-linearly with the number of StorageServers. 
-\item Clients read from sharded StorageServers, so reads scale
-linearly with the number of StorageServers. 
+    \item Clients read from sharded Storage Servers, so reads scale
+linearly with the number of Storage Servers. 
+\item Clients read from sharded Storage Servers, so reads scale
+linearly with the number of Storage Servers. 
 \end{itemize}
 
 Coordinators and control plane's singleton processes in the  like \textbf{Cluster Controller} and \textbf{Sequencer} only perform limited metadata operations.
@@ -158,7 +173,7 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 \begin{enumerate}
     \item Contacting the Sequencer for commit version that surpasses any existing read versions or commit versions.
     \item The Sequencer chooses the commit version by advancing it at a rate of one million versions per second
-    \item Transaction is forwarded to Resolvers that have to hanlde the optimistic concurrency control by checking for read-write conflicts.
+    \item Transaction is forwarded to Resolvers that have to handle the optimistic concurrency control by checking for read-write conflicts.
     \item Transaction is forwarded to a set of designated Log Servers
     \item Proxy reports the committed version to the Sequencer, ensures that later transactions' read versions occur after this commit
     \item Proxy replies to the client
@@ -173,8 +188,7 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
  FoundationDB also offers
  
  \begin{itemize}
-     \item \textbf{Read-Only Transactions}: They occur at a specific read version, ensuring serializability, while leveraging Multi-Version Concurrency Control (MVCC) for efficiency
-     \item \textbf{Snapshot Reads}: consistent view of the database at a specific point in time (no conflict in transactions)
+     \item \textbf{Read-Only Transactions/Snapshot Reads}: They occur at a specific read version, ensuring serializability. Consistent view of the database at a specific point in time (no conflict in transactions)
  \end{itemize}
 
 \end{frame}
@@ -187,24 +201,23 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 	\frametitle{Strict serializability}
 \begin{itemize}
   \item FDB ensures strict serializability via Serializable Snapshot Isolation (SSI), combining OCC with MVCC.
-  \item Transactions obtain read and commit versions from the Sequencer, ensuring a sequential order.
-  \item Commit versions serve as Log Sequence Numbers (LSNs), preventing gaps between transactions.
-  \item Proxies provide LSN and previous LSN to Resolvers and LogServers for transaction processing.
-  \item Resolvers utilize lock-free conflict detection algorithms, admitting transactions only when all agree.
+  \item Transactions obtain read and commit versions from the Sequencer.
+  \item A transaction can commit only when all Resolvers admit the transaction
   \item The key space is divided among Resolvers for parallel conflict detection.
-  \item FDB's Optimistic Concurrency Control design simplifies TS and SS interactions but results in wasted work for aborted transactions.
+  \item Optimistic Concurrency Control design simplifies TS and SS interactions but results in wasted work for aborted transactions (client restart the transaction )
 \end{itemize}
 
  \end{frame}
 
 %------------------------------------------------
 
+% da fare
 
-\begin{frame}
-	\frametitle{Logging protocol ***}
-    Test
+% \begin{frame}
+% 	\frametitle{Logging protocol ***}
+%     Test
 
-\end{frame}
+% \end{frame}
 
 % %------------------------------------------------
 
@@ -260,9 +273,9 @@ Storage Servers for recovery
 	\frametitle{Replication: Log}
 \begin{itemize}
 
-      \item When a Proxy writes logs to LogServers, each sharded log record is synchronously replicated on \( k = f + 1 \) LogServers.
+      \item When a Proxy writes logs to Log Servers, each sharded log record is synchronously replicated on \( k = f + 1 \) Log Servers.
       \item Only when all \( k \) have replied with successful persistence can the Proxy send back the commit response to the client.
-      \item Failure of a LogServer results in transaction system recovery.
+      \item Failure of a Log Server results in transaction system recovery.
 
 \end{itemize}
 \end{frame}
@@ -274,9 +287,9 @@ Storage Servers for recovery
 	\frametitle{Replication: Storage}
 \begin{itemize}
 
-      \item Every shard (key range) is asynchronously replicated to \( k = f + 1 \) StorageServers, forming a "team".
-      \item A StorageServer usually hosts multiple shards (key range) to evenly distribute data across many teams.
-      \item Failure of a StorageServer triggers DataDistributor to move data from affected teams to healthy ones.
+      \item Every shard (key range) is asynchronously replicated with multiple Storage Servers, forming a "team".
+      \item A Storage Server usually hosts multiple shards (key range) to evenly distribute data across many teams.
+      \item Failure of a Storage Server triggers Data Distributor to move data from affected teams to healthy ones.
 
 \end{itemize}
 \end{frame}
