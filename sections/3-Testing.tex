@@ -22,11 +22,24 @@ random number generator
     \end{itemize}
 \end{frame}
 %------------------------------------------------
+
+\begin{frame}
+    \frametitle{Flow, concurrency on C++}
+   FDB needed to implement efficient asynchronous communicating processes with raw speed and I/O efficiency of C++ (11).
+\vspace{0.5cm}
+
+Adding async/await-like
+concurrency primitives with automatic cancellation.
+
+   
+\end{frame}
+
+%------------------------------------------------
 \begin{frame}
     \frametitle{Execution of the Simulator}
     \begin{itemize}
-        \item Multiple FDB servers communicate through a simulated network in a single discrete-event simulation.
         \item Workloads written in Flow interact with simulated FDB servers.
+        \item Multiple FDB servers communicate through a simulated network in a single discrete-event simulation.
     \end{itemize}
 \end{frame}
 %------------------------------------------------
@@ -55,9 +68,9 @@ the database’s availability.
 \begin{frame}
     \frametitle{Fault Injection}
     \begin{itemize}
-        \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
         \item Fault injection techniques test database resilience and increase simulation state diversity.
-        \item FDB cooperates with the simulation to make rare states and events more common through "buggification", the simulation is allowed to inject some unusual (but not contractbreaking) behavior such as unnecessarily returning an
+        \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
+        \item FDB cooperates with the simulation to make rare states and events more common through "buggification", the simulation is allowed to inject some unusual (but not contract breaking) behavior such as unnecessarily returning an
 error from an operation that usually succeeds.
     \end{itemize}
 \end{frame}
@@ -73,7 +86,6 @@ error from an operation that usually succeeds.
 \begin{frame}
     \frametitle{Evaluation of Simulation Efficiency}
     \begin{itemize}
-        \item Conditional coverage macros evaluate and tune simulation effectiveness.
         \item Quick bug discovery is crucial for testing and engineering productivity.
         \item Randomized testing and parallelization enhance code coverage and bug detection.
     \end{itemize}

@@ -24,10 +24,10 @@
 Key features:
 \begin{itemize}
     \item NoSQL
-    \item Ordered
-    \item strictly serializable transactions
+    \item Ordered key-value pair.
+    \item Strictly serializable transactions
     \item ACID transactions
-    \item Flexible and Scalable
+    \item Designed around Core-Layer philosophy 
     
 \end{itemize}
 
@@ -36,7 +36,7 @@ Key features:
 \begin{frame}
 	\frametitle{CAP trade off}
 
-A tradeoff exists between consistency, availability, and
+A trade off exists between consistency, availability, and
 partition tolerance
 \begin{itemize}
     \item Consistency: A read sees all previously completed writes
@@ -67,7 +67,7 @@ FoundationBD satisfied \textbf{Availability} and \textbf{Partition Tolerance}
  Availability in the CAP sense means that all nodes remain able to read and write even when partitioned. A system that keeps some, but not all, of its nodes able to read and write is not Available in the CAP sense, even if it remains available to clients and satisfies its SLAs for high availability.
 \vspace{0.5cm}
 
-As any ACID database must, during a network partition FoundationDB chooses Consistency over Availability. 
+As any ACID database must, during a network partition, FoundationDB chooses Consistency over Availability. 
 
 \end{frame}
 
@@ -86,7 +86,7 @@ FoundationDB has a modular approach, it it provides a highly scalable storage en
 
 \vspace{0.5cm}
 \begin{quote}
-    "What features could we take away? Almost everything, we decided."
+    \textcolor{red}{``What features could we take away? Almost everything, we decided.''}
 \end{quote}
         
 \end{frame}
@@ -96,7 +96,13 @@ FoundationDB has a modular approach, it it provides a highly scalable storage en
 
 \begin{frame}
 	\frametitle{Less is more: The FoundationDB way}
-FoundationDB decouples its data storage technology from its data model. FoundationDB’s core ordered key-value storage technology can be efficiently adapted and remapped to a broad array of rich data models.
+FoundationDB decouples its data storage technology from its data model, core ordered key-value storage technology can be efficiently adapted and remapped to a broad array of rich data models.
+\vspace{0.5cm}
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{img/1-Introduction/sidecar-arch.png}
+\end{center}
+
 \end{frame}
 
 %------------------------------------------------
@@ -104,14 +110,16 @@ FoundationDB decouples its data storage technology from its data model. Foundati
 \begin{frame}
 	\frametitle{Example: indexing}
 
-FoundationDB’s core provides no indexing.
+FoundationDB’s core provides \textbf{no indexing}  (\href{https://apple.github.io/foundationdb/anti-features.html}{anti-feature}).
+
 Instead, a layer provides indexing by storing two kinds of key-values, one for the data and one for the index.
 
 \begin{center}
-\textcolor{red}{people/alice/eye\_color = blue}
+\textbf{\textcolor{red}{people/alice/eye\_color = blue}}
 \end{center}
+
 \begin{center}
-\textcolor{red}{eye\_color/blue/alice = true}
+\textbf{\textcolor{red}{eye\_color/blue/alice = true}}
 \end{center}
 
 ACID transactions allows to update both the data and the index in a single transaction.
@@ -124,12 +132,11 @@ ACID transactions allows to update both the data and the index in a single trans
 
 Popularity and growing open source community is FoundationDB’s focus on the “lower
 half” of a database, leaving the rest to its “layers”.
-
+\vspace{0.5cm}
 Examples:
 \begin{itemize}
     \item \textbf{FoundationDB Record Layer}: adds back much of what users expect from a relational database
-    \item \textbf{JanusGraph}: graph database
-    \item \textbf{CouchDB}
+    \item CouchDB 4.0: adopt FoundationDB in 2019 as storage and replication engine.
 \end{itemize}
 \end{frame}
 

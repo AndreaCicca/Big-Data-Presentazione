@@ -13,9 +13,15 @@
 \begin{frame}
 	\frametitle{Optimistic concurrency control P2}
 While running, transactions use data resources without acquiring locks on those resources. Before committing, each transaction verifies that no other transaction has modified the data it has read. 
-\vspace{0.5cm}
+\vspace{0.2cm}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{img/2-Architecture/Optimistic Concurrency Control.png}
+\end{center}
 
 If the check reveals conflicting modifications, the committing transaction rolls back and can be restarted.
+
+
 \end{frame}
 
 %------------------------------------------------
@@ -107,7 +113,7 @@ FoundationDB uses \textbf{multiversion concurrency control} to provide transacti
 \begin{frame}
 	\frametitle{Data plane: Log system (LS)}
 
-\textbf{Log Servers} act as replicated, distributed persistent queues, each queue storing WAL data for a Storage Server.
+\textbf{Log Servers} act as replicated, distributed persistent queues, each queue storing "Write-Ahead Log" data for a Storage Server.
 	
 \end{frame}
 
@@ -118,7 +124,10 @@ FoundationDB uses \textbf{multiversion concurrency control} to provide transacti
 	\frametitle{Data plane: Storage system (SS)}
 The Storage system consists of a number of \textbf{Storage Servers}, each
 storing a set of data shards (contiguous key ranges),
-and serving client reads. Storage Servers are the majority of processes in the system, and together they form a distributed B-tree.
+and serving client reads. 
+\vspace{0.5cm}
+
+Storage Servers are the majority of processes in the system, and together they form a distributed B-tree.
 The vast majority of processes in a cluster are storage servers.
 	
 \end{frame}
@@ -131,10 +140,9 @@ Scaling is just adding processes for each role. \\
 \begin{itemize}
     \item Clients read from sharded Storage Servers, so reads scale
 linearly with the number of Storage Servers. 
-\item Clients read from sharded Storage Servers, so reads scale
-linearly with the number of Storage Servers. 
 \end{itemize}
 
+\vspace{0.5cm}
 Coordinators and control plane's singleton processes in the  like \textbf{Cluster Controller} and \textbf{Sequencer} only perform limited metadata operations.
 	
 \end{frame}
@@ -144,8 +152,8 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 \begin{frame}
 	\frametitle{Transactions: Read}
 \begin{enumerate}
-    \item Client need to contact one of the Proxies to obtain a read version (timestamp).
-    \item Proxy contacts the Sequencer it requests a read version from the Sequencer that is at least as large as all previously issued transaction commit versions.
+    \item Client $\rightarrow$ Proxies to obtain a read version (timestamp).
+    \item Proxy $\rightarrow$ the Sequencer it requests a read version, that is  least as large as all previously issued transaction commit versions.
     \item Proxy sends read version to client.
     \item Client reads from Storage Servers using the read version issued by the Proxy.
     \item Client can cache this information for the next read if needed.
@@ -171,8 +179,6 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 \begin{frame}
 	\frametitle{Transactions: Proxy commits}
 \begin{enumerate}
-    \item Contacting the Sequencer for commit version that surpasses any existing read versions or commit versions.
-    \item The Sequencer chooses the commit version by advancing it at a rate of one million versions per second
     \item Transaction is forwarded to Resolvers that have to handle the optimistic concurrency control by checking for read-write conflicts.
     \item Transaction is forwarded to a set of designated Log Servers
     \item Proxy reports the committed version to the Sequencer, ensures that later transactions' read versions occur after this commit
@@ -185,7 +191,7 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 \begin{frame}
 	\frametitle{Transactions P3}
 
- FoundationDB also offers
+ FoundationDB offers
  
  \begin{itemize}
      \item \textbf{Read-Only Transactions/Snapshot Reads}: They occur at a specific read version, ensuring serializability. Consistent view of the database at a specific point in time (no conflict in transactions)
@@ -238,15 +244,13 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 	\frametitle{After detecting a failure ***}
     \begin{itemize}
         \item The recovery process starts by
-detecting a failure and recruiting a new transaction system
-\item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
-to prevent another concurrent recovery
-\item CC recovers previous TS system states, including information about older
-Log Servers
-\item CC recruits a new set of Sequencer, Proxies, Resolvers,
-and Log Servers
-\item need to ensure all transactions in the LS are durable and retrievable by
-Storage Servers for recovery
+        detecting a failure and recruiting a new transaction system
+        \item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
+        to prevent another concurrent recovery
+        \item CC recovers previous TS system states, including information about older Log Servers
+        \item CC recruits a new set of Sequencer, Proxies, Resolvers,
+        and Log Servers
+        \item need to ensure all transactions in the LS are durable and retrievable by Storage Servers for recovery
 
     \end{itemize}
 
@@ -273,8 +277,8 @@ Storage Servers for recovery
 	\frametitle{Replication: Log}
 \begin{itemize}
 
-      \item When a Proxy writes logs to Log Servers, each sharded log record is synchronously replicated on \( k = f + 1 \) Log Servers.
-      \item Only when all \( k \) have replied with successful persistence can the Proxy send back the commit response to the client.
+      \item When a Proxy writes logs to Log Servers, each sharded log record is synchronously replicated on multiple Log Servers.
+      \item Only when all Log Servers have replied with successful persistence can the Proxy send back the commit response to the client.
       \item Failure of a Log Server results in transaction system recovery.
 
 \end{itemize}
