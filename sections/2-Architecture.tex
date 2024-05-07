@@ -27,10 +27,9 @@ If the check reveals conflicting modifications, the committing transaction rolls
 %------------------------------------------------
 \begin{frame}
 	\frametitle{Multiversion Concurrency Control (MVCC)}
-  FoundationDB utilizes multiversion concurrency control as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time (always a consistent view when reading).
+  FoundationDB utilizes \textbf{multiversion concurrency control} as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time (always a consistent view when reading).
   \vspace{0.5cm}
   
-  Changes made by a transaction are not applied directly to existing data.
   Transaction can only be performed within the MVCC window (5 seconds).
 \end{frame}
 %------------------------------------------------
@@ -41,8 +40,13 @@ If the check reveals conflicting modifications, the committing transaction rolls
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
-                \item Control Plane
-                \item Data Plane
+                \item \textbf{Control Plane}
+                \item \textbf{Data Plane}
+                \begin{itemize}
+                    \item Transaction System (TS)
+                    \item Log System (LS)
+                    \item Storage System (SS)
+                \end{itemize}
             \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -138,7 +142,7 @@ The vast majority of processes in a cluster are storage servers.
 Scaling is just adding processes for each role. \\
 
 \begin{itemize}
-    \item Clients read from sharded Storage Servers, so reads scale
+\item Clients read from sharded Storage Servers, so reads scale
 linearly with the number of Storage Servers. 
 \end{itemize}
 
@@ -148,44 +152,92 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 \end{frame}
 % %------------------------------------------------
 
-
 \begin{frame}
-	\frametitle{Transactions: Read}
-\begin{enumerate}
+    \frametitle{Transactions: Read}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{enumerate}
     \item Client $\rightarrow$ Proxies to obtain a read version (timestamp).
     \item Proxy $\rightarrow$ the Sequencer it requests a read version, that is  least as large as all previously issued transaction commit versions.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Architecture and transaction processing.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% %------------------------------------------------
+
+\begin{frame}
+    \frametitle{Transactions: Read P2}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{enumerate}
     \item Proxy sends read version to client.
     \item Client reads from Storage Servers using the read version issued by the Proxy.
     \item Client can cache this information for the next read if needed.
-\end{enumerate}
-
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Architecture and transaction processing.png}
+        \end{column}
+    \end{columns}
 \end{frame}
-
-% %------------------------------------------------
-\begin{frame}
-	\frametitle{Transactions: Writes}
-\begin{enumerate}
-    \item When the client decides to commit the transaction, it sends the transaction data to one of the Proxies (read and write that you have done in the transaction)
-    \item Client waits for a response from the Proxy (commit or abort)
-
-\end{enumerate}
-
-\end{frame}
-
-
 
 % %------------------------------------------------
 
 \begin{frame}
-	\frametitle{Transactions: Proxy commits}
-\begin{enumerate}
-    \item Transaction is forwarded to Resolvers that have to handle the optimistic concurrency control by checking for read-write conflicts.
+    \frametitle{Transactions: Writes}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{enumerate}
+                    \item When the client decides to commit the transaction, it sends the transaction data to one of the Proxies (read and write that you have done in the transaction)
+                \item Client waits for a response from the Proxy (commit or abort)
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Architecture and transaction processing.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+% %------------------------------------------------
+\begin{frame}
+    \frametitle{Transactions: Proxy commits}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{enumerate}
+\item Transaction is forwarded to Resolvers that have to handle the optimistic concurrency control by checking for read-write conflicts.
     \item Transaction is forwarded to a set of designated Log Servers
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Architecture and transaction processing.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+% %------------------------------------------------
+\begin{frame}
+    \frametitle{Transactions: Proxy commits P2}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{enumerate}
     \item Proxy reports the committed version to the Sequencer, ensures that later transactions' read versions occur after this commit
     \item Proxy replies to the client
-\end{enumerate}
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Architecture and transaction processing.png}
+        \end{column}
+    \end{columns}
 \end{frame}
-
 % %------------------------------------------------
 
 \begin{frame}
