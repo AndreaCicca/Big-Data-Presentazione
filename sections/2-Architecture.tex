@@ -78,25 +78,42 @@ Coordinators form a Paxos group (consensus protocol) and elect the Cluster Contr
 
 \begin{frame}
     \frametitle{Control plane P2}
-    
-\begin{itemize}
-\item \textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.
-\item \textbf{Ratekeeper} provides overload protection for the cluster.
-\end{itemize}
-	
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \begin{itemize}
+        \item \textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.
+        \item \textbf{Ratekeeper} provides overload protection for the cluster.
+        \end{itemize}
+        
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Control plane.png}
+        \end{column}
+    \end{columns}
 \end{frame}
+
+
 
 %------------------------------------------------
 
+
 \begin{frame}
-	\frametitle{Data plane: Transaction system (TS) P1}
- 
-\begin{itemize}
+    \frametitle{Data plane: Transaction system (TS) P1}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \begin{itemize}
     \item \textbf{Sequencer}: assigns a read and a commit version to each transaction
     \item \textbf{Proxies}: offer MVCC read versions to clients and orchestrate transaction commits
     \item \textbf{Resolvers}: check for conflicts among transactions (5 seconds of history)
-\end{itemize}
-	
+   \end{itemize}
+        
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Transaction System.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 %------------------------------------------------
@@ -115,25 +132,40 @@ FoundationDB uses \textbf{multiversion concurrency control} to provide transacti
 
 
 \begin{frame}
-	\frametitle{Data plane: Log system (LS)}
-
-\textbf{Log Servers} act as replicated, distributed persistent queues, each queue storing "Write-Ahead Log" data for a Storage Server.
-	
+    \frametitle{Data plane: Log system (LS)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \textbf{Log Servers} act as replicated, distributed persistent queues, each queue storing "Write-Ahead Log" data for a Storage Server.
+        
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/log system.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % %------------------------------------------------
 
 
 \begin{frame}
-	\frametitle{Data plane: Storage system (SS)}
-The Storage system consists of a number of \textbf{Storage Servers}, each
+    \frametitle{Data plane: Storage system (SS)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        The Storage system consists of a number of \textbf{Storage Servers}, each
 storing a set of data shards (contiguous key ranges),
 and serving client reads. 
 \vspace{0.5cm}
 
 Storage Servers are the majority of processes in the system, and together they form a distributed B-tree.
 The vast majority of processes in a cluster are storage servers.
-	
+        
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Storage system.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % %------------------------------------------------
@@ -293,7 +325,7 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
 
 %------------------------------------------------
 \begin{frame}
-	\frametitle{After detecting a failure ***}
+	\frametitle{After detecting a failure}
     \begin{itemize}
         \item The recovery process starts by
         detecting a failure and recruiting a new transaction system
