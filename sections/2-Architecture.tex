@@ -317,28 +317,27 @@ Coordinators and control plane's singleton processes in the  like \textbf{Cluste
     \begin{itemize}
     
         \item Traditional databese uses ARIES Recovery (checkpoint, redo, undo)
-        \item in FD the recovery is purposely made very cheap—there, greatly simplifying design choice: redo log processing is the same as the normal log forward path
-        \item The recovery system needs to find out the end of the redo log and the Storage Servers will asynchronously replay the log
+        \item in FD the recovery is purposely made very cheap, greatly simplifying design choice: redo log processing is the same as the normal log forward path
         
 \end{itemize}
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}
-	\frametitle{After detecting a failure}
-    \begin{itemize}
-        \item The recovery process starts by
-        detecting a failure and recruiting a new transaction system
-        \item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
-        to prevent another concurrent recovery
-        \item CC recovers previous TS system states, including information about older Log Servers
-        \item CC recruits a new set of Sequencer, Proxies, Resolvers,
-        and Log Servers
-        \item need to ensure all transactions in the LS are durable and retrievable by Storage Servers for recovery
+% \begin{frame}
+% 	\frametitle{After detecting a failure}
+%     \begin{itemize}
+%         \item The recovery process starts by
+%         detecting a failure and recruiting a new transaction system
+%         \item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
+%         to prevent another concurrent recovery
+%         \item CC recovers previous TS system states, including information about older Log Servers
+%         \item CC recruits a new set of Sequencer, Proxies, Resolvers,
+%         and Log Servers
+%         \item need to ensure all transactions in the LS are durable and retrievable by Storage Servers for recovery
 
-    \end{itemize}
+%     \end{itemize}
 
-\end{frame}
+% \end{frame}
 
 
 
