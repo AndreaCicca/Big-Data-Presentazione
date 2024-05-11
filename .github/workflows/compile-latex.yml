@@ -14,7 +14,7 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Checkout del codice sorgente
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Compila il documento LaTeX
         uses: dante-ev/latex-action@latest
@@ -43,7 +43,7 @@ jobs:
             -shell-escape
 
       - name: Carica PDF come artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: PDF_output
           path: main.pdf
