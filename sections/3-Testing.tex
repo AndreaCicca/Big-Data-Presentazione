@@ -3,24 +3,20 @@
 \begin{frame}
     \frametitle{Simulation Testing for Foundation DB}
     \begin{itemize}
-        \item Testing and debugging distributed systems is challenging, particularly for Foundation DB (FDB).
-        \item FDB employs an ambitious approach using a deterministic discrete-event simulation.
+        \item Testing and debugging distributed systems is challenging, particularly for Foundation DB.
+        \item FDB employs an ambitious approach using a \textbf{deterministic discrete-event simulation}.
         \item The simulation environment quickly exposes bugs in the database, ensuring reproducibility for investigation.
     \end{itemize}
 \end{frame}
 %------------------------------------------------
-% \begin{frame}
-%     \frametitle{Deterministic Simulator}
-%     \begin{itemize}
-%         \item All database
-% code is deterministic and multi-threaded concurrency is
-% avoided (instead, one database node is deployed per core).
-%         \item All sources of nondeterminism and communication are
-% abstracted, including network, disk, time, and pseudo-
-% random number generator
-%         \item Flow, a syntactic extension to C++, facilitates deterministic execution of highly concurrent code.
-%     \end{itemize}
-% \end{frame}
+\begin{frame}
+    \frametitle{Deterministic Simulator}
+    \begin{itemize}
+        \item All database code is deterministic and multi-threaded concurrency is avoided (instead, one database node is deployed per core).
+        \item \textbf{All sources of non determinism and communication are abstracted}, including network, disk, time, and pseudorandom number generator
+        \item \textbf{Flow}, a syntactic extension to C++, facilitates deterministic execution of highly concurrent code.
+    \end{itemize}
+\end{frame}
 %------------------------------------------------
 
 \begin{frame}
@@ -31,7 +27,7 @@
    FDB needed to implement efficient asynchronous communicating processes with raw speed and I/O efficiency of C++.
 \vspace{0.5cm}
 
-Adding async/await-like
+Flow is an extention to the C++ 11 standard that is used to add async/await-like
 concurrency primitives with automatic cancellation.
 
    
@@ -61,10 +57,10 @@ concurrency primitives with automatic cancellation.
     \frametitle{Testing the system}
     \begin{itemize}
         \item FDB uses various test to detect failures in simulation.
-        \item Assertions and invariants
+        \item \textbf{Assertions and invariants}
 in their data that can only be maintained through ATOMIC transaction and isolation.
-        \item Recoverability is checked by set of failures sufficient to break
-the database’s availability.
+        \item Recoverability is checked by set of \textbf{failures sufficient to break
+the database’s availability}.
     \end{itemize}
 \end{frame}
 %------------------------------------------------
@@ -72,7 +68,7 @@ the database’s availability.
     \frametitle{Fault Injection}
     \begin{itemize}
         \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
-        \item FDB cooperates with the simulation to make rare states and events more common through "buggification"
+        \item FDB cooperates with the simulation to make rare states and events more common through "\textbf{buggification}"
         \item Maximizes simulation diversity by randomizing cluster size, workloads, fault injection parameters.
     \end{itemize}
 \end{frame}
@@ -80,8 +76,7 @@ the database’s availability.
 \begin{frame}
     \frametitle{Limitations of Simulation}
     \begin{itemize}
-        \item Simulation may not reliably detect performance issues or test third-party dependencies.
-        \item Bugs in critical dependent systems can lead to issues in FDB.
+        \item Simulation may not reliably detect performance issues or test \textbf{third-party dependencies}.
         \item Simulation cannot reliably detect performance issues, such as an imperfect load-balancing algorithm
     \end{itemize}
 \end{frame}
