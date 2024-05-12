@@ -57,8 +57,7 @@ concurrency primitives with automatic cancellation.
     \frametitle{Testing the system}
     \begin{itemize}
         \item FDB uses various test to detect failures in simulation.
-        \item \textbf{Assertions and invariants}
-in their data that can only be maintained through ATOMIC transaction and isolation.
+        \item \textbf{Assertions and invariants} can only be maintained through ATOMIC transaction and isolation.
         \item Recoverability is checked by set of \textbf{failures sufficient to break
 the database’s availability}.
     \end{itemize}
@@ -70,6 +69,17 @@ the database’s availability}.
         \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
         \item FDB cooperates with the simulation to make rare states and events more common through "\textbf{buggification}"
         \item Maximizes simulation diversity by randomizing cluster size, workloads, fault injection parameters.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Buggification}
+    Simulation is allowed to inject some unusual (\textbf{not contractbreaking}) behavior such as 
+    \begin{itemize}
+        \item Unnecessarily returning an error from an operation that usually succeeds
+        \item Injecting a delay in an operation that is usually fast
+        \item Choosing an unusual value for a tuning parameter
     \end{itemize}
 \end{frame}
 %-------------------------------

@@ -12,14 +12,14 @@
 
 \begin{frame}
 	\frametitle{Optimistic concurrency control P2}
-While running, transactions use data resources without acquiring locks on those resources. Before committing, each transaction verifies that no other transaction has modified the data it has read. 
+While running, transactions use data resources \textbf{without acquiring locks on those resources}. Before committing, each transaction verifies that no other transaction has modified the data it has read. 
 \vspace{0.2cm}
 
 \begin{center}
     \includegraphics[width=0.5\textwidth]{img/2-Architecture/Optimistic Concurrency Control.png}
 \end{center}
 
-If the check reveals conflicting modifications, the committing transaction rolls back and can be restarted.
+If the check (Resolvers) reveals conflicting modifications, the committing transaction rolls back and can be restarted.
 
 
 \end{frame}
@@ -158,7 +158,6 @@ and serving client reads.
 \vspace{0.5cm}
 
 Storage Servers are the majority of processes in the system, and together they form a distributed B-tree.
-The vast majority of processes in a cluster are storage servers.
         
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -290,11 +289,11 @@ Coordinators and control plane's singleton processes like \textbf{Cluster Contro
 \begin{frame}
 	\frametitle{Strict serializability}
 \begin{itemize}
-  \item FDB ensures strict serializability via Serializable Snapshot Isolation (SSI), combining OCC with MVCC.
+  \item FDB ensures strict serializability via Serializable \textbf{Snapshot Isolation} , combining \textbf{OCC} with \textbf{MVCC}.
 %   \item Transactions obtain read and commit versions from the Sequencer.
   \item A transaction can commit only when all Resolvers admit the transaction
-  \item The key space is divided among Resolvers for parallel conflict detection.
-  \item Optimistic Concurrency Control design simplifies TS and SS interactions but results in wasted work for aborted transactions (client restart the transaction )
+  \item The key space is \textbf{divided among Resolvers for parallel conflict detection}.
+  \item Optimistic Concurrency Control design simplifies TS and SS interactions but results in wasted work for aborted transactions (client restart the transaction)
 \end{itemize}
 
  \end{frame}
@@ -318,6 +317,7 @@ Coordinators and control plane's singleton processes like \textbf{Cluster Contro
     
         \item Traditional databese uses ARIES Recovery (checkpoint, redo, undo)
         \item In FD the recovery is purposely made very cheap, greatly simplifying design choice: redo log processing is the same as the normal log forward path
+        \item System can easily recruit a new TS system in case of failure (Sequencer, Proxies, Resolvers)
         
 \end{itemize}
 \end{frame}
