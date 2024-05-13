@@ -6,7 +6,7 @@
  In a system with \textbf{optimistic concurrency control}, transactions operate under the optimistic assumption that conflicts are rare. 
 \vspace{0.5cm}
 
- OCC assumes that multiple transactions can frequently complete without interfering with each other.
+FoundationDB utilizes \textbf{multiversion concurrency control} as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time (always a consistent view when reading).
 \end{frame}
 %------------------------------------------------
 
@@ -24,14 +24,6 @@ If the check (Resolvers) reveals conflicting modifications, the committing trans
 
 \end{frame}
 
-%------------------------------------------------
-\begin{frame}
-	\frametitle{Multiversion Concurrency Control (MVCC)}
-  FoundationDB utilizes \textbf{multiversion concurrency control} as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time (always a consistent view when reading).
-  \vspace{0.5cm}
-  
-  Transaction can only be performed within the MVCC window (5 seconds).
-\end{frame}
 %------------------------------------------------
 
 
@@ -59,39 +51,39 @@ If the check (Resolvers) reveals conflicting modifications, the committing trans
 
 %------------------------------------------------
 
-\begin{frame}
-	\frametitle{Control plane P1}
+% \begin{frame}
+% 	\frametitle{Control plane P1}
 
-The control plane is responsible for persisting critical metadata of the cluster for high availability.
-\textbf{Cluster Controller} monitors all servers in the cluster and recruits 3 processes:
-\begin{itemize}
-    \item Sequencer (Data Plane)
-    \item Data Distributor
-    \item Ratekeeper
-\end{itemize}
+% The control plane is responsible for persisting critical metadata of the cluster for high availability.
+% \textbf{Cluster Controller} monitors all servers in the cluster and recruits 3 processes:
+% \begin{itemize}
+%     \item Sequencer (Data Plane)
+%     \item Data Distributor
+%     \item Ratekeeper
+% \end{itemize}
 
-Coordinators form a Paxos group (consensus protocol) and elect the Cluster Controller.
-\end{frame}
+% Coordinators form a Paxos group (consensus protocol) and elect the Cluster Controller.
+% \end{frame}
 
 %------------------------------------------------
 
 
-\begin{frame}
-    \frametitle{Control plane P2}
-    \begin{columns}
-        \begin{column}{0.5\textwidth}
-        \begin{itemize}
-        \item \textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.
-        \item \textbf{Ratekeeper} provides overload protection for the cluster.
-        \end{itemize}
+% \begin{frame}
+%     \frametitle{Control plane P2}
+%     \begin{columns}
+%         \begin{column}{0.5\textwidth}
+%         \begin{itemize}
+%         \item \textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.
+%         \item \textbf{Ratekeeper} provides overload protection for the cluster.
+%         \end{itemize}
         
-        \end{column}
-        \begin{column}{0.5\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{img/2-Architecture/Control plane.png}
-        \end{column}
-    \end{columns}
-\end{frame}
+%         \end{column}
+%         \begin{column}{0.5\textwidth}
+%             \centering
+%             \includegraphics[width=\textwidth]{img/2-Architecture/Control plane.png}
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
 
 
@@ -118,15 +110,15 @@ Coordinators form a Paxos group (consensus protocol) and elect the Cluster Contr
 
 %------------------------------------------------
 
-\begin{frame}
-	\frametitle{Data plane: Transaction system (TS) P2}
+% \begin{frame}
+% 	\frametitle{Data plane: Transaction system (TS) P2}
 
-FoundationDB uses \textbf{multiversion concurrency control} to provide transactionally isolated reads without locking data or blocking writes.
-\vspace{0.5cm}
+% FoundationDB uses \textbf{multiversion concurrency control} to provide transactionally isolated reads without locking data or blocking writes.
+% \vspace{0.5cm}
 
-\textbf{Optimistic concurrency control} ensures that deadlocks are impossible and that slow or failing clients cannot interfere with the operation of the database.
+% \textbf{Optimistic concurrency control} ensures that deadlocks are impossible and that slow or failing clients cannot interfere with the operation of the database.
 	
-\end{frame}
+% \end{frame}
 
 % %------------------------------------------------
 
@@ -168,19 +160,19 @@ Storage Servers are the majority of processes in the system, and together they f
 \end{frame}
 
 % %------------------------------------------------
-\begin{frame}
-	\frametitle{Scaling}
-Scaling is just adding processes for each role. \\
+% \begin{frame}
+% 	\frametitle{Scaling}
+% Scaling is just adding processes for each role. \\
 
-\begin{itemize}
-\item Clients read from sharded Storage Servers, so reads scale
-linearly with the number of Storage Servers. 
-\end{itemize}
+% \begin{itemize}
+% \item Clients read from sharded Storage Servers, so reads scale
+% linearly with the number of Storage Servers. 
+% \end{itemize}
 
-\vspace{0.5cm}
-Coordinators and control plane's singleton processes like \textbf{Cluster Controller} and \textbf{Sequencer} only perform limited metadata operations.
+% \vspace{0.5cm}
+% Coordinators and control plane's singleton processes like \textbf{Cluster Controller} and \textbf{Sequencer} only perform limited metadata operations.
 	
-\end{frame}
+% \end{frame}
 % %------------------------------------------------
 
 \begin{frame}
@@ -269,18 +261,6 @@ Coordinators and control plane's singleton processes like \textbf{Cluster Contro
         \end{column}
     \end{columns}
 \end{frame}
-% %------------------------------------------------
-
-\begin{frame}
-	\frametitle{Transactions P3}
-
- FoundationDB offers
- 
- \begin{itemize}
-     \item \textbf{Read-Only Transactions/Snapshot Reads}: They occur at a specific read version, ensuring serializability. Consistent view of the database at a specific point in time (no conflict in transactions)
- \end{itemize}
-
-\end{frame}
 
 
 % %------------------------------------------------
@@ -347,41 +327,51 @@ Coordinators and control plane's singleton processes like \textbf{Cluster Contro
 
 
 %------------------------------------------------
-
-
 \begin{frame}
-	\frametitle{Replication: Metadata}
+	\frametitle{Replication: Metadata, Log, Storage}
     \begin{itemize}
       \item System metadata of the control plane is stored on Coordinators using \textbf{Disk Paxos} (consensus protocol used for reliable data replication across multiple nodes optimized for disk storage)
-      \item As long as a quorum (majority) of Coordinators are live, this metadata can be recovered.
-
-\end{itemize}
-\end{frame}
-
- %------------------------------------------------
-
-
-\begin{frame}
-	\frametitle{Replication: Log}
-\begin{itemize}
-
       \item When a Proxy writes logs to Log Servers, each sharded log record is synchronously replicated on \textbf{multiple Log Servers}.
-      \item Only when all Log Servers have replied with successful persistence can the Proxy send back the commit response to the client.
-      \item Failure of a Log Server results in \textbf{transaction system recovery}.
+      \item Every shard (key range) is asynchronously replicated with multiple Storage Servers, forming a "\textbf{team}".
 
 \end{itemize}
 \end{frame}
+
+
+
+% \begin{frame}
+% 	\frametitle{Replication: Metadata}
+%     \begin{itemize}
+%       \item System metadata of the control plane is stored on Coordinators using \textbf{Disk Paxos} (consensus protocol used for reliable data replication across multiple nodes optimized for disk storage)
+%       \item As long as a quorum (majority) of Coordinators are live, this metadata can be recovered.
+
+% \end{itemize}
+% \end{frame}
 
  %------------------------------------------------
 
 
-\begin{frame}
-	\frametitle{Replication: Storage}
-\begin{itemize}
+% \begin{frame}
+% 	\frametitle{Replication: Log}
+% \begin{itemize}
 
-      \item Every shard (key range) is asynchronously replicated with multiple Storage Servers, forming a "\textbf{team}".
-      \item A Storage Server usually hosts multiple shards (key range) to evenly \textbf{distribute data across many teams}.
-      \item Failure of a Storage Server triggers Data Distributor to move data from affected teams to healthy ones.
+%       \item When a Proxy writes logs to Log Servers, each sharded log record is synchronously replicated on \textbf{multiple Log Servers}.
+%       \item Only when all Log Servers have replied with successful persistence can the Proxy send back the commit response to the client.
+%       \item Failure of a Log Server results in \textbf{transaction system recovery}.
 
-\end{itemize}
-\end{frame}
+% \end{itemize}
+% \end{frame}
+
+ %------------------------------------------------
+
+
+% \begin{frame}
+% 	\frametitle{Replication: Storage}
+% \begin{itemize}
+
+%       \item Every shard (key range) is asynchronously replicated with multiple Storage Servers, forming a "\textbf{team}".
+%       \item A Storage Server usually hosts multiple shards (key range) to evenly \textbf{distribute data across many teams}.
+%       \item Failure of a Storage Server triggers Data Distributor to move data from affected teams to healthy ones.
+
+% \end{itemize}
+% \end{frame}

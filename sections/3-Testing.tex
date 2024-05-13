@@ -9,14 +9,14 @@
     \end{itemize}
 \end{frame}
 %------------------------------------------------
-\begin{frame}
-    \frametitle{Deterministic Simulator}
-    \begin{itemize}
-        \item All database code is deterministic and multi-threaded concurrency is avoided (instead, one database node is deployed per core).
-        \item \textbf{All sources of non determinism and communication are abstracted}, including network, disk, time, and pseudorandom number generator
-        \item \textbf{Flow}, a syntactic extension to C++, facilitates deterministic execution of highly concurrent code.
-    \end{itemize}
-\end{frame}
+% \begin{frame}
+%     \frametitle{Deterministic Simulator}
+%     \begin{itemize}
+%         \item All database code is deterministic and multi-threaded concurrency is avoided (instead, one database node is deployed per core).
+%         \item \textbf{All sources of non determinism and communication are abstracted}, including network, disk, time, and pseudorandom number generator
+%         \item \textbf{Flow}, a syntactic extension to C++, facilitates deterministic execution of highly concurrent code.
+%     \end{itemize}
+% \end{frame}
 %------------------------------------------------
 
 \begin{frame}
@@ -63,14 +63,14 @@ the database’s availability}.
     \end{itemize}
 \end{frame}
 %------------------------------------------------
-\begin{frame}
-    \frametitle{Fault Injection}
-    \begin{itemize}
-        \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
-        \item FDB cooperates with the simulation to make rare states and events more common through "\textbf{buggification}"
-        \item Maximizes simulation diversity by randomizing cluster size, workloads, fault injection parameters.
-    \end{itemize}
-\end{frame}
+% \begin{frame}
+%     \frametitle{Fault Injection}
+%     \begin{itemize}
+%         \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
+%         \item FDB cooperates with the simulation to make rare states and events more common through "\textbf{buggification}"
+%         \item Maximizes simulation diversity by randomizing cluster size, workloads, fault injection parameters.
+%     \end{itemize}
+% \end{frame}
 
 
 \begin{frame}
