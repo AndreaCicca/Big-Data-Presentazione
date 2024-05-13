@@ -310,16 +310,21 @@ Coordinators and control plane's singleton processes like \textbf{Cluster Contro
 
 % %------------------------------------------------
 
-
 \begin{frame}
-	\frametitle{Transaction system recover}
-    \begin{itemize}
-    
-        \item Traditional databese uses ARIES Recovery (checkpoint, redo, undo)
-        \item In FD the recovery is purposely made very cheap, greatly simplifying design choice: redo log processing is the same as the normal log forward path
-        \item System can easily recruit a new TS system in case of failure (Sequencer, Proxies, Resolvers)
-        
-\end{itemize}
+    \frametitle{Transaction system recover}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{enumerate}
+                \item Traditional databese uses ARIES Recovery (checkpoint, redo, undo)
+                \item In FD the recovery is purposely made very cheap, greatly simplifying design choice: redo log processing is the same as the normal log forward path
+                \item System can easily recruit a new TS system in case of failure (Sequencer, Proxies, Resolvers)
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Architecture and transaction processing.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 %------------------------------------------------
