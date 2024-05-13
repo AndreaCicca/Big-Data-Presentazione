@@ -2,26 +2,11 @@
 
 %------------------------------------------------
 \begin{frame}
-	\frametitle{Optimistic concurrency control P1}
+	\frametitle{Optimistic concurrency control}
  In a system with \textbf{optimistic concurrency control}, transactions operate under the optimistic assumption that conflicts are rare. 
 \vspace{0.5cm}
 
 FoundationDB utilizes \textbf{multiversion concurrency control} as part of its optimistic approach. With MVCC, each transaction operates on a "version" of the data, reflecting a database state at a certain point in time (always a consistent view when reading).
-\end{frame}
-%------------------------------------------------
-
-\begin{frame}
-	\frametitle{Optimistic concurrency control P2}
-While running, transactions use data resources \textbf{without acquiring locks on those resources}. Before committing, each transaction verifies that no other transaction has modified the data it has read. 
-\vspace{0.2cm}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{img/2-Architecture/Optimistic Concurrency Control.png}
-\end{center}
-
-If the check (Resolvers) reveals conflicting modifications, the committing transaction rolls back and can be restarted.
-
-
 \end{frame}
 
 %------------------------------------------------

@@ -50,6 +50,22 @@ Examples:
 
 %%% ARCHITECTURE %%%
 
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Optimistic concurrency control P2}
+While running, transactions use data resources \textbf{without acquiring locks on those resources}. Before committing, each transaction verifies that no other transaction has modified the data it has read. 
+\vspace{0.2cm}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{img/2-Architecture/Optimistic Concurrency Control.png}
+\end{center}
+
+If the check (Resolvers) reveals conflicting modifications, the committing transaction rolls back and can be restarted.
+
+
+\end{frame}
+
 \begin{frame}
 	\frametitle{Control plane P1}
 
