@@ -1,0 +1,92 @@
+%%% ARCHITECTURE %%%
+
+\begin{frame}
+	\frametitle{Control plane P1}
+
+The control plane is responsible for persisting critical metadata of the cluster for high availability.
+\textbf{Cluster Controller} monitors all servers in the cluster and recruits 3 processes:
+\begin{itemize}
+    \item Sequencer (Data Plane)
+    \item Data Distributor
+    \item Ratekeeper
+\end{itemize}
+
+Coordinators form a Paxos group (consensus protocol) and elect the Cluster Controller.
+\end{frame}
+
+%------------------------------------------------
+
+
+\begin{frame}
+    \frametitle{Control plane P2}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \begin{itemize}
+        \item \textbf{Data Distributor} is responsible for monitoring failures and balancing data among Storage Servers.
+        \item \textbf{Ratekeeper} provides overload protection for the cluster.
+        \end{itemize}
+        
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{img/2-Architecture/Control plane.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Data plane: Transaction system (TS) P2}
+
+FoundationDB uses \textbf{multiversion concurrency control} to provide transactionally isolated reads without locking data or blocking writes.
+\vspace{0.5cm}
+
+\textbf{Optimistic concurrency control} ensures that deadlocks are impossible and that slow or failing clients cannot interfere with the operation of the database.
+	
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Scaling}
+Scaling is just adding processes for each role. \\
+
+\begin{itemize}
+\item Clients read from sharded Storage Servers, so reads scale
+linearly with the number of Storage Servers. 
+\end{itemize}
+
+\vspace{0.5cm}
+Coordinators and control plane's singleton processes like \textbf{Cluster Controller} and \textbf{Sequencer} only perform limited metadata operations.
+	
+\end{frame}
+% %------------------------------------------------
+
+------------------------------------------------
+\begin{frame}
+	\frametitle{After detecting a failure}
+    \begin{itemize}
+        \item The recovery process starts by
+        detecting a failure and recruiting a new transaction system
+        \item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
+        to prevent another concurrent recovery
+        \item CC recovers previous TS system states, including information about older Log Servers
+        \item CC recruits a new set of Sequencer, Proxies, Resolvers,
+        and Log Servers
+        \item need to ensure all transactions in the LS are durable and retrievable by Storage Servers for recovery
+
+    \end{itemize}
+
+\end{frame}
+
+%% TESTING %%
+
+\begin{frame}
+    \frametitle{Fault Injection}
+    \begin{itemize}
+        \item Simulation injects various faults such as machine failures, network partitions, and disk behavior.
+        \item FDB cooperates with the simulation to make rare states and events more common through "\textbf{buggification}"
+        \item Maximizes simulation diversity by randomizing cluster size, workloads, fault injection parameters.
+    \end{itemize}
+\end{frame} 
