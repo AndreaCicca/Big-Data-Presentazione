@@ -1,4 +1,53 @@
 \section{Appendicies}
+
+%% INTRODUCTION %%
+
+\begin{frame}
+	\frametitle{Consistency over Availability}
+
+ Availability in the CAP sense means that all nodes remain able to read and write even when partitioned. A system that keeps some, but not all, of its nodes able to read and write is not Available in the CAP sense, even if it remains available to clients and satisfies its SLAs for high availability.
+\vspace{0.5cm}
+
+As any ACID database must, during a network partition, FoundationDB chooses \textbf{Consistency over Availability}. 
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Example: indexing}
+
+FoundationDB’s core provides \textbf{no indexing}  (\href{https://apple.github.io/foundationdb/anti-features.html}{anti-feature}).
+
+Instead, a layer provides indexing by storing two kinds of key-values, one for the data and one for the index.
+
+\begin{center}
+\textbf{\textcolor{red}{people/alice/eye\_color = blue}}
+\end{center}
+
+\begin{center}
+\textbf{\textcolor{red}{eye\_color/blue/alice = true}}
+\end{center}
+
+ACID transactions allows to update both the data and the index in a single transaction.
+\end{frame}
+%------------------------------------------------
+
+
+\begin{frame}
+	\frametitle{Layer strategy}
+
+FoundationBD is leaving the rest to additionals “layers”.
+
+\vspace{0.5cm}
+Examples:
+\begin{itemize}
+    \item \textbf{FoundationDB Record Layer}: Java Api that adds back much of what users expect from a simple relational database 
+    \item CouchDB 4.0: adopt FoundationDB in 2019 as storage and replication engine.
+\end{itemize}
+\end{frame}
+%------------------------------------------------
+
 %%% ARCHITECTURE %%%
 
 \begin{frame}
