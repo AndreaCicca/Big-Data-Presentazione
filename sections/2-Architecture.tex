@@ -257,7 +257,7 @@ Storage Servers are the majority of processes in the system, and together they f
   \item FDB ensures strict serializability via Serializable \textbf{Snapshot Isolation} , combining \textbf{OCC} with \textbf{MVCC}.
 %   \item Transactions obtain read and commit versions from the Sequencer.
   \item A transaction can commit only when all Resolvers admit the transaction
-  \item The key space is \textbf{divided among Resolvers for parallel conflict detection}.
+%   \item The key space is \textbf{divided among Resolvers for parallel conflict detection}.
   \item Optimistic Concurrency Control design simplifies TS and SS interactions but results in wasted work for aborted transactions (client restart the transaction)
 \end{itemize}
 
