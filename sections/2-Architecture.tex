@@ -303,15 +303,6 @@ Storage Servers are the majority of processes in the system, and together they f
 
 
 %------------------------------------------------
-\begin{frame}
-	\frametitle{Replication: Metadata, Log, Storage}
-    \begin{itemize}
-      \item System metadata of the control plane is stored on Coordinators using \textbf{Disk Paxos} (consensus protocol used for reliable data replication across multiple nodes optimized for disk storage)
-      \item When a Proxy writes logs to Log Servers, each sharded log record is synchronously replicated on \textbf{multiple Log Servers}.
-      \item Every shard (key range) is asynchronously replicated with multiple Storage Servers, forming a "\textbf{team}".
-
-\end{itemize}
-\end{frame}
 
 
 
