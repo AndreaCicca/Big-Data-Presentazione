@@ -183,8 +183,8 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-    \item Proxy sends read version to client.
-    \item Client reads from Storage Servers using the read version issued by the Proxy.
+    \item Proxy $\rightarrow$ client read version.
+    \item Client reads from Storage Servers.
     \item Client can cache this information for the next read if needed.
             \end{enumerate}
         \end{column}
@@ -202,8 +202,8 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-                    \item When the client decides to commit the transaction, it sends the transaction data to one of the Proxies (read and write that you have done in the transaction)
-                \item Client waits for a response from the Proxy (commit or abort)
+                \item When the client sends the transaction data (read and write that you have done in the transaction) to one of the Proxies
+                \item Client waits for a response (commit or abort)
             \end{enumerate}
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -220,7 +220,7 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-\item Transaction is forwarded to Resolvers that have to handle the optimistic concurrency control by checking for read-write conflicts.
+\item Transaction $\rightarrow$ to Resolvers that have to handle the OCC by checking for \b conflicts.
     \item Transaction is forwarded to a set of designated Log Servers
             \end{enumerate}
         \end{column}
