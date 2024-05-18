@@ -202,7 +202,7 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-                \item When the client sends the transaction data (read and write that you have done in the transaction) to one of the Proxies
+                \item When the client sends the \textbf{transaction data} (read and write that you have done in the transaction) to one of the Proxies
                 \item Client waits for a response (commit or abort)
             \end{enumerate}
         \end{column}
@@ -220,8 +220,8 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-\item Transaction $\rightarrow$ to Resolvers that have to handle the OCC by checking for \b conflicts.
-    \item Transaction is forwarded to a set of designated Log Servers
+\item Transaction $\rightarrow$ to \textbf{Resolvers} that have to handle the OCC by checking for \b conflicts.
+    \item Transaction is forwarded to a set of designated \textbf{Log Servers}.
             \end{enumerate}
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -236,7 +236,7 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-    \item Proxy reports the committed version to the Sequencer, ensures that later transactions' read versions occur after this commit
+    \item Proxy reports the committed version $\rightarrow$ Sequencer, ensures that later transactions' read versions occur after this commit
     \item Proxy replies to the client
             \end{enumerate}
         \end{column}
@@ -258,7 +258,7 @@ Storage Servers are the majority of processes in the system, and together they f
 %   \item Transactions obtain read and commit versions from the Sequencer.
   \item A transaction can commit only when all Resolvers admit the transaction
 %   \item The key space is \textbf{divided among Resolvers for parallel conflict detection}.
-  \item Optimistic Concurrency Control design simplifies TS and SS interactions but results in wasted work for aborted transactions (client restart the transaction)
+  \item Optimistic Concurrency Control design \textbf{simplifies TS and SS interactions} but results in \textbf{wasted work for aborted transactions} (client restart the transaction)
 \end{itemize}
 
  \end{frame}
@@ -271,9 +271,9 @@ Storage Servers are the majority of processes in the system, and together they f
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{enumerate}
-                \item Traditional databese uses ARIES Recovery (checkpoint, redo, undo)
-                \item In FD the recovery is purposely made very cheap, greatly simplifying design choice: redo log processing is the same as the normal log forward path
-                \item System can easily recruit a new TS system in case of failure (Sequencer, Proxies, Resolvers)
+                \item Traditional databese uses \textbf{ARIES Recovery} (checkpoint, redo, undo).
+                \item In FD the recovery is purposely made \textbf{very cheap}, greatly simplifying design choice: \textbf{redo log processing is the same as the normal log forward path}.
+                \item System can easily recruit a new TS system in case of failure (Sequencer, Proxies, Resolvers).
             \end{enumerate}
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -282,25 +282,6 @@ Storage Servers are the majority of processes in the system, and together they f
         \end{column}
     \end{columns}
 \end{frame}
-
-%------------------------------------------------
-% \begin{frame}
-% 	\frametitle{After detecting a failure}
-%     \begin{itemize}
-%         \item The recovery process starts by
-%         detecting a failure and recruiting a new transaction system
-%         \item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
-%         to prevent another concurrent recovery
-%         \item CC recovers previous TS system states, including information about older Log Servers
-%         \item CC recruits a new set of Sequencer, Proxies, Resolvers,
-%         and Log Servers
-%         \item need to ensure all transactions in the LS are durable and retrievable by Storage Servers for recovery
-
-%     \end{itemize}
-
-% \end{frame}
-
-
 
 %------------------------------------------------
 

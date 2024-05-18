@@ -5,7 +5,10 @@
 \begin{frame}
 	\frametitle{Consistency over Availability}
 
- Availability in the CAP sense means that all nodes remain able to read and write even when partitioned. A system that keeps some, but not all, of its nodes able to read and write is not Available in the CAP sense, even if it remains available to clients and satisfies its SLAs for high availability.
+ Availability in the \textbf{CAP} sense means that all nodes remain able to read and write even 
+ when partitioned. \textbf{A system that keeps some, but not all, of its nodes able to read and write is 
+ not Available in the CAP sense}, even if it remains available to clients and satisfies its SLAs 
+ for high availability.
 \vspace{0.5cm}
 
 As any ACID database must, during a network partition, FoundationDB chooses \textbf{Consistency over Availability}. 
@@ -87,9 +90,9 @@ If the check (Resolvers) reveals conflicting modifications, the committing trans
 The control plane is responsible for persisting critical metadata of the cluster for high availability.
 \textbf{Cluster Controller} monitors all servers in the cluster and recruits 3 processes:
 \begin{itemize}
-    \item Sequencer (Data Plane)
-    \item Data Distributor
-    \item Ratekeeper
+    \item \textbf{Sequencer} (Data Plane)
+    \item \textbf{Data Distributor}
+    \item \textbf{Ratekeeper}
 \end{itemize}
 
 Coordinators form a Paxos group (consensus protocol) and elect the Cluster Controller.
@@ -149,12 +152,12 @@ Coordinators and control plane's singleton processes like \textbf{Cluster Contro
 	\frametitle{After detecting a failure}
     \begin{itemize}
         \item The recovery process starts by
-        detecting a failure and recruiting a new transaction system
-        \item CC (Cluster Controller) reads the previous TS configuration from Coordinators and locks this information
-        to prevent another concurrent recovery
+        \textbf{detecting a failure and recruiting a new transaction system}
+        \item CC (Cluster Controller) reads the \textbf{previous TS configuration from Coordinators} and locks this information
+        to \textbf{prevent another concurrent recovery}.
         \item CC recovers previous TS system states, including information about older Log Servers
-        \item CC recruits a new set of Sequencer, Proxies, Resolvers,
-        and Log Servers
+        \item CC \textbf{recruits a new set of Sequencer, Proxies, Resolvers,
+        and Log Servers}
         \item need to ensure all transactions in the LS are durable and retrievable by Storage Servers for recovery
 
     \end{itemize}
