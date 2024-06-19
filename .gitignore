@@ -3,3 +3,11 @@
 # ingore vs-code folder settings
 
 .vscode/*
+
+**.log
+**.aux
+**.pdf
+**.out
+**.snm
+**.nav
+**.toc
